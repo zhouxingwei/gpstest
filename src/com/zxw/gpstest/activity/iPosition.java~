@@ -1,0 +1,145 @@
+package com.zxw.location.activity;
+
+import android.content.res.AssetManager;
+import android.content.res.AssetFileDescriptor;
+import android.media.MediaPlayer;
+import java.io.File;
+import java.io.IOException;
+import android.util.Log;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;    //for sensor
+import android.app.AlertDialog;
+import android.content.Context;
+import android.widget.EditText;
+import android.content.DialogInterface;
+import android.text.TextUtils;
+import com.zxw.location.R;
+import com.zxw.location.activity.pedometer;
+import com.zxw.location.activity.imutest;
+import android.view.animation.RotateAnimation;
+import android.view.animation.*;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.widget.ImageView;
+
+public class iPosition extends Activity implements OnClickListener, SensorEventListener{
+
+    private static iPosition mPos;
+
+    private Button mBtnimu;
+    private Button mBtngnss;
+    private Button mBtnindoor;
+    private Button mBtnpedo;
+   	private SensorManager mSensorManager;
+	private ImageView mNeedleview;
+	private float curentDegree = 0f;
+	private Sensor msensor;
+
+    public iPosition() {
+        mPos = this;
+    }
+
+    public static iPosition getMainActivity() {
+        return mPos;
+    }
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        initView();
+        initSensor();
+    }
+
+    private void initSensor() {
+		mSensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+		msensor = mSensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+		mSensorManager.registerListener(this,msensor,SensorManager.SENSOR_DELAY_FASTEST);
+	}
+    /**
+     * 初始化View
+     */
+    private void initView() {
+        mBtngnss = (Button) findViewById(R.id.btn_gnss);
+        mBtnindoor = (Button) findViewById(R.id.btn_indoor);
+        mBtnimu = (Button) findViewById(R.id.btn_imu);
+        mBtnpedo = (Button) findViewById(R.id.btn_pedometer);
+		mNeedleview = (ImageView)findViewById(R.id.needle_rl);
+        mBtngnss.setOnClickListener(this);
+        mBtnimu.setOnClickListener(this);
+        mBtnindoor.setOnClickListener(this);
+		mBtnpedo.setOnClickListener(this);
+    }
+
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()) {
+            case R.id.btn_imu:
+				Log.i("iposition","pedometer button is pressed");
+                Intent intent = new Intent(iPosition.this, imutest.class);
+                startActivity(intent);
+                break;
+            case R.id.btn_gnss:
+                
+                break;
+            case R.id.btn_pedometer:
+				Log.i("iposition","pedometer button is pressed");
+                Intent intent = new Intent(iPosition.this, pedometer.class);
+                startActivity(intent);
+                break;
+            case R.id.btn_indoor:
+                //Intent intent = new Intent(Game.this, ConfigPreference.class);
+                //startActivityForResult(intent, 0);
+                break;
+            default:
+                break;
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (resultCode == RESULT_OK) {
+
+        }
+    }
+    @Override
+	public void onSensorChanged(SensorEvent event)
+	{
+		Sensor sensor = event.sensor; 
+		float degree;
+		
+		synchronized (this) {
+			if(sensor.getType() == Sensor.TYPE_ORIENTATION) {
+				degree = event.values[0];
+				RotateAnimation rotatem = new RotateAnimation(curentDegree,-degree,
+				Animation.RELATIVE_TO_SELF,0.5f,Animation.RELATIVE_TO_SELF,0.5f);
+				rotatem.setDuration(200);
+				mNeedleview.startAnimation(rotatem);
+				curentDegree = -degree;
+				//Log.v("iposition","currentdegree is "+curentDegree+"degree is "+degree);
+			}
+		}
+	}
+	@Override 
+	public void onAccuracyChanged(Sensor sensor,int num)
+	{
+
+	}
+}

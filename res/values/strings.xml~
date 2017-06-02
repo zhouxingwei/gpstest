@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">GPStest</string>
+    <string name="imu">imu-test</string>
+    <string name="gpson">GPS-ON</string>
+    <string name="disnum">distance</string>
+    <string name="stepdis">0.0km</string>
+    <string name="numbers">0</string>
+    <string name="pedocount">steps</string>
+    <string name="Done">Done</string>
+    <string name="accdocount">加速度(x,y,z)</string>
+    <string name="gydocount">陀螺仪(x,y,z)</string>
+</resources>

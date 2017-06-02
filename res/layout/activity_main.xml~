@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:background="#88BFBFBF"
+    android:orientation="vertical">
+
+    <LinearLayout
+        style="?android:attr/buttonBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="top"
+        android:padding="3dp">
+        <Button
+            android:id="@+id/btn_pedometer"
+            android:layout_gravity="left|center_vertical"
+			android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/gray_button"
+            android:text="@string/pedometer"
+			android:textSize="20sp"
+            android:textColor="#FFFF83FA" />
+
+        <Button
+            android:id="@+id/btn_imu"
+            android:layout_gravity="right|center_vertical"
+			android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/gray_button"
+            android:text="@string/imu"
+			android:textSize="20sp"
+            android:textColor="#FFFF83FA" />
+    </LinearLayout>
+
+    <FrameLayout
+        android:id="@+id/compass_panel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/compass_rl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+			android:src="@drawable/sinan_compass"
+            android:scaleType="fitCenter" />
+        <ImageView
+            android:id="@+id/needle_rl"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+			android:src="@drawable/sinan_needle"
+            android:scaleType="fitCenter"/>
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:layout_gravity="bottom|center_vertical"
+        android:padding="3dp">
+
+        <Button
+            android:id="@+id/btn_gnss"
+			android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:layout_gravity="left|center_vertical"
+            android:layout_weight="1"
+            android:background="@drawable/gray_button"
+            android:text="@string/gnss"
+			android:textSize="20sp"
+            android:textColor="#FFFF83FA" />
+
+        <Button
+            android:id="@+id/btn_indoor"
+            android:layout_gravity="right|center_vertical"
+			android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:layout_margin="5dp"
+            android:layout_weight="1"
+            android:background="@drawable/gray_button"
+            android:text="@string/indoor"
+			android:textSize="20sp"
+            android:textColor="#FFFF83FA" />
+
+
+    </LinearLayout>
+
+</LinearLayout>

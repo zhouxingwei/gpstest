@@ -1,0 +1,151 @@
+package com.zxw.location.activity;
+
+import android.util.Log;
+
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Handler;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+
+import android.widget.TextView;
+import android.hardware.Sensor;
+import android.hardware.SensorManager;    //for sensor
+
+import android.content.Context;
+import android.widget.EditText;
+import android.content.DialogInterface;
+import android.text.TextUtils;
+import com.zxw.location.R;
+import android.os.Bundle;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.widget.ImageView;
+import android.os.Message;
+import java.lang.Math;
+import java.lang.Integer;
+import java.lang.Float;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
+import java.util.Timer;
+import java.util.TimerTask;
+import android.content.SharedPreferences;
+
+public class imutest extends Activity implements SensorEventListener{
+
+ 	public imutest(){ }
+
+	private static final int UPDATE_ACC = 123;
+	private static final int UPDATE_GY = 134;
+	private SensorManager mpd;
+	private Sensor psensor,gysensor;
+	private long timestamp;
+	private int acctimes,gytimes;
+	TextView acctx;
+	TextView gytx;
+	private Handler mhandler;
+	private float[] acc=new float[3];
+	private float[] gy = new float[3];
+	public native int sendSensorData(long data,float accx,float accy,float accz,float gyx,float gyy,float gyz);
+	static{
+		System.loadLibrary("imu");
+	}
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+		setContentView(R.layout.imutest);
+		initSensor();
+		acctx = (TextView)findViewById(R.id.accvalue);
+		gytx = (TextView)findViewById(R.id.gyvalue);
+
+	    mhandler = new Handler(){
+    		@Override
+			public void handleMessage(Message msg)
+			{
+				String str = null;
+				if(msg.what == UPDATE_ACC)
+				{
+					str = String.format("%.6f,%.6f,%.6f",acc[0],acc[1],acc[2]);
+					sendSensorData(timestamp/1000000,acc[0],acc[1],acc[2],gy[0],gy[1],gy[2]);
+					acctx.setText(str);
+				}
+				if(msg.what == UPDATE_GY)
+				{
+					str = String.format("%.6f,%.6f,%.6f",gy[0],gy[1],gy[2]);
+					gytx.setText(str);
+				}
+			}
+		};
+	}
+@Override
+	protected void onStart()
+	{
+		super.onStart();
+
+	}
+@Override
+	protected void onResume()
+	{
+		super.onResume();
+	}
+@Override
+	protected void onStop()
+	{
+		super.onStop();
+
+	}
+
+    private void initSensor() {
+		mpd = (SensorManager) getSystemService(SENSOR_SERVICE);
+		psensor = mpd.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+		mpd.registerListener(this,psensor,SensorManager.SENSOR_DELAY_NORMAL);
+		gysensor = mpd.getDefaultSensor(Sensor.TYPE_GYROSCOPE);
+		mpd.registerListener(this,gysensor,SensorManager.SENSOR_DELAY_NORMAL);
+
+	}
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+	public void onSensorChanged(SensorEvent event)
+	{
+		Sensor sensor = event.sensor; 
+		synchronized (this) {
+
+			timestamp = event.timestamp;
+			if (sensor.getType() == Sensor.TYPE_ACCELEROMETER) 
+			{
+				acctimes++;
+				if(acctimes > 2)
+				{
+					acctimes = 0;
+					acc[0] = event.values[0];
+					acc[1] = event.values[1];
+					acc[2] = event.values[2];
+					mhandler.sendEmptyMessage(UPDATE_ACC);
+				}
+			}
+			if (sensor.getType() == Sensor.TYPE_GYROSCOPE) 
+			{
+				gytimes++;
+				if(gytimes > 2)
+				{
+					gytimes = 0;
+					gy[0] = event.values[0];
+					gy[1] = event.values[1];
+					gy[2] = event.values[2];
+					mhandler.sendEmptyMessage(UPDATE_GY);
+				}
+			}
+		}
+	}
+	@Override 
+	public void onAccuracyChanged(Sensor sensor,int num)
+	{
+
+	}
+}
